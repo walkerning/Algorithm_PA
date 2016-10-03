@@ -15,6 +15,9 @@ int main(int argc, char** argv) {
   }
 
   std::ifstream fs(argv[1]);
+  if (!fs.is_open()) {
+    std::cerr << "打开文件 " << argv[1] << " 失败" << std::endl;
+  }
   std::vector<Point> points;
   int num = ReadFile(fs, points);
   std::cout << "从文件 " << argv[1] << " 中读取 " << num << " 个点" << std::endl;

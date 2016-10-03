@@ -1,5 +1,4 @@
 #include "algo.h"
-using namespace std; // fortest
 
 int ReadFile(std::istream& is, std::vector<Point>& vec) {
   double p_x;
@@ -23,6 +22,18 @@ int WriteFile(std::ostream& os, const std::vector<Point>& vec) {
     os << *it << std::endl;
   }
   return vec.size();
+}
+
+bool GenerateRandomPoints(int num_points, double minimum, double maximum, std::vector<Point>& vec) {
+  if (minimum > maximum) return false;
+  for (int i = 0; i < num_points; i++) {
+    double new_x = (double)rand() / RAND_MAX;
+    new_x = minimum + new_x * (maximum - minimum);
+    double new_y = (double)rand() / RAND_MAX;
+    new_y = minimum + new_y * (maximum - minimum);
+    vec.push_back(Point(new_x, new_y));
+  }
+  return true;
 }
 
 ClosestPairSolver::ClosestPairSolver() : num_points_(0),

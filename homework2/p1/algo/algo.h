@@ -23,6 +23,8 @@ int ReadFile(std::istream& is, std::vector<Point>& vec);
 
 int WriteFile(std::ostream& os, const std::vector<Point>& vec);
 
+bool GenerateRandomPoints(int num_points, double minimum, double maximum, std::vector<Point>& vec);
+
 class ClosestPairSolver {
 public:
   typedef struct _indexedPoint{

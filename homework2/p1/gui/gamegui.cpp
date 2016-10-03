@@ -77,13 +77,9 @@ void GameGui::GenRandomPoints() {
   QString str = ui.randomNumEdit->text();
   if (!str.isEmpty()) {
     std::vector<Point> vec;
-    for (int i = 0; i < str.toInt(); i++) {
-      double new_x = (double)rand() / RAND_MAX;
-      new_x = (-kCOORDINATE_LIMIT) + new_x * (2*kCOORDINATE_LIMIT);
-      double new_y = (double)rand() / RAND_MAX;
-      new_y = (-kCOORDINATE_LIMIT) + new_y * (2*kCOORDINATE_LIMIT);
-      vec.push_back(Point(new_x, new_y));
-    }
+    GenerateRandomPoints(str.toInt(), -kCOORDINATE_LIMIT,
+                         kCOORDINATE_LIMIT, vec);
+
     boardGui->AddPoints(vec);
   }
 }
