@@ -8,3 +8,5 @@ $(QMAKEFILE):
 
 clean: $(QMAKEFILE)
 	@make -f $(QMAKEFILE) clean
+	rm $(QMAKEFILE)
+	rm -rf build/
