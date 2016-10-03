@@ -1,0 +1,206 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+
+\usepackage{ctex}
+\usepackage{amssymb}
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage{sectsty} % Allows customizing section commands
+\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+\normalfont \normalsize 
+%\textsc{university, school or department name} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge Analysis and Design of Algorithm - Homework 1\\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+}
+
+\author{宁雪妃} % Your name
+%\author{Xuefei Ning} % Your name
+
+\date{\normalsize\today} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+
+%\section{}
+
+\section{}
+% \lipsum[2] % Dummy text
+\textbf{1. Prove $2n + \Theta(n^2) = \Theta(n^2)$}
+
+This problem wants us to prove $\forall T \in \Theta(n^2)$,  we have $T^{'} = T + 2n \in \Theta(n^2)$.
+
+\textbf{Proof}:
+
+$T^{'} = T + 2n \implies T = T^{'} - 2n$, and we have
+
+\[
+\because \exists c_1, c_2, n_0 \in {\mathbb(R)}^+, s.t. \forall n \geq n_0, 0 \leq c_1n^2 \leq T \leq c_2n^2
+\]
+\[
+\therefore T^{'} \leq c_2n^2 + 2n, T^{'} \geq c_1n^2 + 2n. \forall n \geq n_0
+\]
+
+When $n^2 - 2n \geq 0$, we have $T^{'} \leq c_2n^2 + 2n \leq (c_2 + 1)n^2$.
+
+So, we have $T^{'} \leq c_2^{'} n^2$, $\forall n \geq \max(2, n_0)$, in which $c_2^{'} = c_2 + 1$.
+
+Likewise, we have $T^{'} \geq c_1n^2 + 2n \geq c_1n^2$, $\forall n \geq \max(0, n_0)$, which lead to
+
+\[
+0 \leq c_1n^2 \leq T^{'} \leq (c_2 + 1)n^2, \forall n \geq \max(n_0, 2)
+\]
+
+The statement is proved.
+
+% -------
+\section{}
+\textbf{2. Prove $\Theta(g(n)) \cap o(g(n)) = \emptyset$}
+
+\textbf{Proof}:
+
+$\forall f(n) \in \Theta(g(n))$, we have
+\begin{equation}
+  \exists c_1, n_0 > 0, \forall n \geq n_0, f(n) \geq c_2g(n)
+  \label{eq:2_1}
+\end{equation}
+
+Let's assume $f(n) \in o(g(n))$, according to the definition of the $o$-notation, we have
+\begin{equation}
+  \forall c > 0, \exists n_1 > 0, \quad s.t. 0 \leq f(n) < cg(n), \forall n \geq n_1
+  \label{eq:2_2}
+\end{equation}
+
+We can just choose $c = c_1$, when $n > n_0 \land n > n_1$, according to \ref{eq:2_1}, we have $f(n) \geq c_1g(n)$, according to \ref{eq:2_2}, we have $f(n) < c_1g(n)$, these two conclusion conflict with each other obviously.
+
+So, the assumation $f(n) \in o(g(n))$ is false for every $f(n) \in \Theta(g(n))$. So $\Theta(g(n)) \cap o(g(n)) = \emptyset$.
+
+% --------
+\section{}
+\textbf{3. Prove $\Theta(g(n)) \cup o(g(n)) \neq O(g(n))$}
+
+\textbf{Proof}:
+
+It's obvious that $\Theta(g(n)) \subset O(g(n))$ and $o(g(n)) \subset O(g(n))$.
+
+So, to prove the statement, we just need to construct a function $f^{*}(n)$ so that $f^{*} \in O(g(n))$, $f^{*} \notin \Theta(g(n))$ and $f^{*} \notin o(g(n))$.
+\begin{itemize}
+\item To make $f^{*} \notin \Theta(g(n))$, $f^{*}$ must have function values at some points that violate the definition of tight bound even when $n -> \inf$. So, we must have
+  \[
+  \forall c > 0, \forall n_0 > 0, \exists n_i > n_0, \quad s.t. \quad f^{*}(n_i) < cg(n_i)
+  \]
+  We could simply put some 0 at all integer points to achieve this.
+\item To make $f^{*} \notin \o(g(n))$, $f^{*}$ must satisfy that
+  \[
+  \exists c > 0, \forall n_0 > 0, \exists n_i > n_0 \quad s.t. \quad f^{*}(n_i) > cg(n_i)
+  \]
+  This is just easy, we could make the function value of $f^{*}$ at all points other than the integer points equals to $g(n)$.
+\end{itemize}
+
+The following function we just constructed belong to neigther $\Theta(g(n))$ or $o(g(n))$.
+
+\begin{equation}
+  f^{*}(n) =
+  \begin{cases}
+    0 & \quad \text{if } n \in \mathbb{N}\\
+    g(n) & \quad \text{if } other
+  \end{cases}
+\end{equation}
+
+This function is not continous, however, if we want some continous function, that is also easy to construct: Rather than the discrete zero function values we put here, we could just \textbf{periodically} make the function value of $f^{*}(n)$ drop to 0 (or the corresponding value of a function that is \textbf{strictly smaller than $g(n)$ asymptotically}, 0 is a simple feasible choice) continously.
+
+$f^{*}(n): f^{*}(n) \in O(g(n)), f^{*}(n) \notin \Theta(g(n)) \cup o(g(n))$ is really easy to construct, as stated above, so, the statement is proved.
+
+% --------
+\section{}
+\textbf{4. Prove $\max(f(n), g(n)) = \Theta(f(n) + g(n))$}
+
+\textbf{Proof}:
+
+Choose $c_1 = 1/2$ and $c_2 = 1$, we have
+\[
+\forall n > 0, 0 \leq 1/2 (f(n) + g(n)) \leq \max(f(n), g(n)) \leq f(n) + g(n)
+\]
+
+The statement is proved.
+
+% --------
+\section{}
+\textbf{5. Solve the recurrence $T(n) = 2T(\sqrt{n}) + 1$}
+
+\textbf{Proof}:
+
+Use the substitution method, let $n = 2^{2^m}$, we have $T(n) = S(m) = 2S(m-1) + 1$.
+
+This recurrence could be easily solved. $S(m) = c2^m - 1$, in which $m = \log_2{(\log_2{n})}$ and $c$ is a constant.
+
+Substitue $m$ back we get $T(n) = S(m) = c\log_2{n} - 1 = \Theta(\log{n})$.
+
+% --------
+\section{}
+\textbf{6. Solve the recurrence $nT(n) = (n-2)T(n-1) + 2$}
+
+\textbf{Proof}:
+
+Multiply $n-1$ on both side of the recurrence equation, we have
+
+\[
+n(n-1)T(n) = (n-1)(n-2)T(n-1) + 2(n-1)
+\]
+
+Substitute $G(n) = n(n-1)T(n)$, we have $G(n) = G(n-1) + 2(n-1)$. This recurrence could be easily solved that $G(n) = \Theta(n^2)$. So we have $T(n) = G(n)/{n(n-1)} = \Theta(1)$.
+
+\end{document}
