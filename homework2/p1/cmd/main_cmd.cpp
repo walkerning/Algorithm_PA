@@ -2,6 +2,7 @@
  * Command line interface for test
  */
 #include <fstream>
+#include <ctime>
 #include "algo/algo.h"
 
 int print_usage() {
@@ -27,11 +28,15 @@ int main(int argc, char** argv) {
   int index1;
   int index2;
   double mindist;
+
+  std::clock_t start = std::clock();
   bool success = solver.FindClosestPair(&index1, &index2, &mindist);
   if (!success) {
     std::cerr << "点数不够, 没有距离的最小值" << std::endl;
     return 1;
   }
+  std::cout << "Time: " << (std::clock() - start) / (double)CLOCKS_PER_SEC << " s" << std::endl;
+
   std::cout << "点: " << std::endl << points.at(index1) << std::endl
             << points.at(index2) << std::endl;
   std::cout << "最小距离: " << mindist << std::endl;

@@ -61,6 +61,30 @@ bool _sort_by_second(const std::tuple<int, double> &t1, const std::tuple<int, do
   return std::get<1>(t1) < std::get<1>(t2);
 }
 
+/* FindClosestPairNSquare is the naive O(n^2) algorithm to find the minimal distance */
+bool ClosestPairSolver::FindClosestPairNSquare(int* pindex1, int* pindex2, double* pdist) {
+  if (num_points_ <= 1) {
+    return false;
+  }
+  double mindist = -1;
+  int index1 = 0;
+  int index2 = 0;
+  for (int i = 0; i < num_points_; i++) {
+    for (int j = i + 1; j < num_points_; j++) {
+      double dist = _dist(ipoints_ori_.at(i), ipoints_ori_.at(j));
+      if (dist < mindist || mindist < 0) {
+        mindist = dist;
+        index1 = i;
+        index2 = j;
+      }
+    }
+  }
+  *pindex1 = index1;
+  *pindex2 = index2;
+  *pdist = sqrt(mindist);
+  return true;
+}
+
 bool ClosestPairSolver::FindClosestPair(int* pindex1, int* pindex2, double* pdist) {
   // copy `ipoints_ori_` to `ipoints_`
   // sort the `ipoints_` vector by x

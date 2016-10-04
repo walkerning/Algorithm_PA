@@ -47,6 +47,8 @@ public:
     current_index2_ = -1;
     current_sqr_mindist_ = -1;
   }
+  bool FindClosestPairNSquare(int* pindex1, int* pindex2,
+                              double* pdist);
   bool FindClosestPair(int* pindex1, int* pindex2,
                        double* pdist);
   bool _FindClosestPair(std::vector<IndexedPoint>::iterator beg, std::vector<IndexedPoint>::iterator end, const std::vector<int>& indexes_by_y, int* pindex1, int* pindex2, double* pdist);
