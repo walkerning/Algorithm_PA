@@ -59,11 +59,20 @@ def fibo_square(num):
     else:
         return mul1(square(fibo_square(num / 2)))
 
+# def fibo_bottom_up(num):
+#     fibo = [0, 1]
+#     for i in range(2, num + 1):
+#         fibo.append(fibo[-1] + fibo[-2])
+#     return fibo[num]
+
 def fibo_bottom_up(num):
-    fibo = [0, 1]
+    if num == 0:
+        return 0
+    num1 = 0
+    num2 = 1
     for i in range(2, num + 1):
-        fibo.append(fibo[-1] + fibo[-2])
-    return fibo[num]
+        num2, num1 = num1 + num2, num2
+    return num2
 
 def main():
     def noneg_int(value):
