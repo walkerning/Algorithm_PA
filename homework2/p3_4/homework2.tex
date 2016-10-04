@@ -1,0 +1,154 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+
+\usepackage{ctex}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage{sectsty} % Allows customizing section commands
+\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+\normalfont \normalsize 
+%\textsc{university, school or department name} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge Analysis and Design of Algorithm - Homework 2\\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+}
+
+\author{宁雪妃} % Your name
+%\author{Xuefei Ning} % Your name
+
+\date{\normalsize\today} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+
+%\section{}
+
+% \section{}
+% \lipsum[2] % Dummy text
+\textbf{3. CLRS 5.3-4: 证明\textit{PERMUTE-BY-CYCLIC}过程中, 每个元素$A[i]$出现在$B$中任意位置概率为$1/n$, 以及排列结果不是均匀随机排列}
+
+对于任意$A$中的元素$A[i]$, 设事件$X_{i,m}$为"$A[i]$出现在$B$中的第$m$个位置". 其中$m \in \{1, \dots, n\}$, 对于任意$m$, 都有且唯一的$offset = (m - i + (m - i) < 0? n:0) \in \{1, \dots, n\}$与之对应。有:
+\[
+P(X_{i,m}) = P(offset = m - i + (m - i) < 0? n:0) = 1/n
+\]
+所以对于任意元素$A[i]$, 其出现在$B$中任意位置的概率都是$1/n$.
+\\[2ex]
+但是此排列的结果不是均匀随机排列, 注意到均匀随机排列有性质: $P(\mbox{any permutation}) = 1/n!$。
+
+而在\textit{PERMUTE-BY-CYCLIC}中, 由于每个$A[i]$最后的位置互相并不独立, 只是一起移动了偏移量offset, 排列后的循环顺序和排列前保持一样, 其它排列都不可能出现。条件概率:
+\[
+P(X_{j, (j+offset-1) \% n + 1} | X_{i,(i+offset)\%n+1}) = 1
+\]
+而不是$\frac{1}{n-1}$。所以可以容易地举出反例. 比如对于某个排列$X = X_{1,2} \wedge X_{2,3} \wedge \dots \wedge X_{n-1,n} \wedge X_{n,1}$, 该排列出现的可能性为$P(X) = P(X_{1,2}) \bullet 1 \bullet \dots \bullet 1 = 1/n$, 而不是$1/n!$。此排列结果不是均匀随机排列。
+\\[4ex]
+% --------
+
+\textbf{4. CLRS 5.3-5: 证明\textit{PERMUTE-BY-SORTING}的数组$P$中, 所有元素都唯一的概率至少是$1-1/n$}
+
+数组$P$由下面的代码生成
+\begin{lstlisting}
+  for i = 1 to n
+      P[i] = RANDOM(1, n^3)
+\end{lstlisting}
+该代码生成的不同的$P$的个数一共有${(n^3)}^n$, 其中所有$n$个元素互不相同的个数为$C_{n^3}^{n} n!$. 由于每种可能性被选出的概率相同, 所以所有元素互不相同的概率为:
+\[
+P(\mbox{all different}) = \frac{C_{n^3}^{n} n!}{{(n^3)}^n}
+\]
+\\[2ex]
+题中要求证明$P(\mbox{all different}) >= 1 - 1/n$. 两边同时取自然对数, 即要证明$\log{P(\mbox{all different})} >= \log(1 - 1/n)$, 证明如下:
+\begin{equation}
+  \begin{split}
+    \log \frac{C_{n^3}^{n} n!}{{(n^3)}^n} = \log \frac{(n^3 - 1)(n^3 - 2)\dots(n^3 - (n - 1))}{{(n^3)}^{n-1}} \\
+    = \log{\prod_{i=1}^{n-1} 1 - \frac{i}{n^3}} = \sum_{i=1}^{n-1}{\log{1 - \frac{i}{n^3}}}
+  \end{split}
+\end{equation}
+由于$\log{1-x}$函数是一个递减函数, 上述求和式用黎曼积分定义可得不等关系如下:
+\begin{equation}
+  \begin{split}
+    \sum_{i=1}^{n-1}{\log{(1 - \frac{i}{n^3})}} \geq \int_1^n \log{(1-\frac{x}{n^3})} \,\mathrm{d}x
+    = n^3[(1 - \frac{x}{n^3})(log(1 - \frac{x}{n^3}) - 1)]|_{x = n}^{x = 1} \\
+    = (n^3 - 1)\log{(1-\frac{1}{n^3})} - (n^3 - n)\log{(1 - \frac{1}{n^2})} + 1 - n
+  \end{split}
+\end{equation}
+\\[2ex]
+所以问题$\log{P(\mbox{all different})} - \log{(1 - 1/n)} \geq 0$变为了要证明:
+\begin{equation}
+  \begin{split}
+    f(n) = (n^3 - 1)\log{(1-\frac{1}{n^3})} - (n^3 - n)\log{(1 - \frac{1}{n^2})} + 1 - n - \log{(1 - \frac{1}{n})} \geq 0 \\
+    \forall n \in \mathbb{N}
+  \end{split}
+\end{equation}
+
+\begin{equation}
+  \begin{split}
+f'(n) = 3n^2\log{(1-\frac{1}{n^3})} + (3n^2 - 1)\log{(1-\frac{1}{n^2})} - \frac{n^2 -2n + 2}{n^2 - n} \\
+\leq 0 - \frac{(n-1)^2 + 1}{n^2 - n} \leq 0
+  \end{split}
+\end{equation}
+所以该函数$f(n)$的导数在我们研究的$n$的范围内都是小于0的, 所以
+
+\begin{equation}
+  \begin{split}
+    f(n) \geq \lim_{n \to \infty} f(n)
+    = \lim_{n \to \infty} (n^3 - 1)(-\frac{1}{n^3} - \frac{1}{2n^6} - O(\frac{1}{n^9})) - (n^3 - n)(-\frac{1}{n^2} - \frac{1}{2n^4} - \frac{1}{3n^6} - O(\frac{1}{n^8}))\\
+    - (-\frac{1}{n} - \frac{1}{2n^2} - \frac{1}{3n^3} - O(\frac{1}{n^4})) + 1 - n
+    = \lim_{n \to \infty} \frac{1}{2n} + \frac{1}{2n^2} + \frac{2}{3n^3} + O(\frac{1}{n^4}) = 0^+ > 0
+  \end{split}
+\end{equation}
+上式用泰勒展开化简的过程中要注意保持小项, 由于第一项要保持$n^3$的一阶项, 那么$n^3$的二阶项$n^6$也必须保留, 相应的后面的泰勒展开式也要保留到所有相乘后为$\Omega(\frac{1}{n^3})$的高阶项。得证。
+\end{document}
