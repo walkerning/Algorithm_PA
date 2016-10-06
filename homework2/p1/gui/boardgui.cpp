@@ -57,7 +57,7 @@ void BoardGui::_AddPoint(Point p) {
 }
 
 void BoardGui::AddPoints(const std::vector<Point>& vec) {
-  for (std::vector<const Point>::iterator it = vec.begin();
+  for (std::vector<Point>::const_iterator it = vec.begin();
        it != vec.end(); it++) {
     _AddPoint(*it);
   }

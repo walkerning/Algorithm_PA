@@ -17,7 +17,7 @@ int ReadFile(std::istream& is, std::vector<Point>& vec) {
 }
 
 int WriteFile(std::ostream& os, const std::vector<Point>& vec) {
-  for (std::vector<const Point>::iterator it = vec.begin();
+  for (std::vector<Point>::const_iterator it = vec.begin();
        it != vec.end(); it++) {
     os << *it << std::endl;
   }
@@ -47,7 +47,7 @@ void ClosestPairSolver::AddPoint(Point new_point) {
 }
 
 void ClosestPairSolver::AddPoints(const std::vector<Point>& new_points) {
-  for (std::vector<const Point>::iterator it = new_points.begin(); it < new_points.end(); it++) {
+  for (std::vector<Point>::const_iterator it = new_points.begin(); it < new_points.end(); it++) {
     AddPoint(*it);
   }
 }
@@ -132,7 +132,7 @@ bool ClosestPairSolver::_FindClosestPair(std::vector<IndexedPoint>::iterator beg
   double middle_x = (*middle_it).point.x;
   vector<int> indexes_by_y_l;
   vector<int> indexes_by_y_r;
-  for (vector<const int>::iterator it = indexes_by_y.begin(); it != indexes_by_y.end(); it++) {
+  for (vector<int>::const_iterator it = indexes_by_y.begin(); it != indexes_by_y.end(); it++) {
     if ((ipoints_.at(*it)).point.x <= middle_x) {
       indexes_by_y_l.push_back(*it);
     } else {
@@ -173,7 +173,7 @@ bool ClosestPairSolver::_FindClosestPair(std::vector<IndexedPoint>::iterator beg
 
   // Merge: O(n)
   vector<int> indexes_by_y_cross;
-  for (vector<const int>::iterator it = indexes_by_y.begin(); it != indexes_by_y.end(); it++) {
+  for (vector<int>::const_iterator it = indexes_by_y.begin(); it != indexes_by_y.end(); it++) {
     double ipoint_x = ipoints_.at(*it).point.x;
     if (ipoint_x > middle_x - mindist && ipoint_x < middle_x + mindist) {
       indexes_by_y_cross.push_back(*it);

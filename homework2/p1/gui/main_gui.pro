@@ -1,5 +1,5 @@
 QMAKE_CXXFLAGS += --std=c++11
-QT += core gui
+QT += core gui widgets
 FORMS += gamegui.ui
 
 # ugly.. but work
