@@ -7,7 +7,8 @@ BoardGui::BoardGui(double coordinate_limit, QWidget *parent) :
 {
   setScene(new QGraphicsScene(this));
   setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-  setSceneRect(-100, -100, 200, 200);
+  // QGraphicView.setSceneRect 设置scroll bar scroll时(非zoom)能够看到的scene大小
+  setSceneRect(-coordinate_limit*10, -coordinate_limit*10, coordinate_limit*20, coordinate_limit * 20);
   setMouseTracking(true);
 
   // Draw the x, y axis
@@ -86,14 +87,18 @@ void BoardGui::FocusPair(Point p1, Point p2) {
   double half_rect_size;
   double x_dist = fabs(p1.x - p2.x) * 10;
   double y_dist = fabs(p1.y - p2.y) * 10;
-  half_rect_size = x_dist > y_dist? x_dist: y_dist;
-  QPointF center = (QPointF(p1.x, p1.y) + QPointF(p2.x, p2.y)) * 5;
+  half_rect_size = x_dist > y_dist? x_dist: y_dist;//矩形边长取两倍长边的长度
+  QPointF center = (QPointF(p1.x, p1.y) + QPointF(p2.x, p2.y)) * 5; // center取中心
+  // 用于填满view里的矩形QRect
   QRectF exactRect(center.x() - half_rect_size, center.y() - half_rect_size,
                    2 * half_rect_size,
                    2 * half_rect_size);
   QMatrix mtx;
+  // scale matrix把scene里的rect_size*2画到width()和height(). view的width和height本身就是正方形。所以不会畸形
   mtx.scale(width()/half_rect_size/2, height()/half_rect_size/2);
+  // scene坐标到view坐标转换矩阵
   setMatrix(mtx);
-  setSceneRect(exactRect);
+  //setSceneRect(exactRect); // 可以没有, 没有就仍然可以scroll到整个空间. 感觉没有更科学
+  // 设置center
   centerOn(exactRect.center());
 }
