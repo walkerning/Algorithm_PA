@@ -1,0 +1,107 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+
+\usepackage{ctex}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage{sectsty} % Allows customizing section commands
+\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+\normalfont \normalsize 
+%\textsc{university, school or department name} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge Analysis and Design of Algorithm - Homework 3\\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+}
+
+\author{宁雪妃} % Your name
+%\author{Xuefei Ning} % Your name
+
+\date{\normalsize\today} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+
+%\section{}
+
+% \section{}
+% \lipsum[2] % Dummy text
+\textbf{8.3-4. 说明如何在$O(n)$的时间内, 对0到$n^3 - 1$区间内的n个整数进行排序}
+
+对于从0到$n^3 - 1$区间内的整数, 其二进制比特位数 $b \leq \lceil \log(n^3) \rceil < \log(n^3) + 1 = 3\log(n) + 1$。
+这$n$个整数可以用b位的二进制数表示, 我们使用基数排序算法, 将一个b位二进制数看作$d = \lceil b/r \rceil < b/r + 1$个$r$位数, 其中$r = \lceil \log(n) \rceil$。
+有
+\[
+d = \frac{b}{r} + 1 < \frac{3\log(n) + 1}{\log(n)} + 1 = 4 + \frac{1}{\log(n)} = \Theta(1)
+\]
+对于每个$r$位数, 可以使用计数排序。使用计数排序对n个r位二进制整数排序的复杂度为$\Theta(n + 2^r) = \Theta(n)$。所以此算法总复杂度为 $d \cdot \Theta(n) = \Theta(n)$。
+\\[4ex]
+% --------
+
+\textbf{8.4-4. 在单位圆内给定n个均匀分布的随机点。设计一个在平均情况下有$\Theta(n)$时间代价的算法, 能够按点到原点的距离对$n$个点进行排序。}
+
+点到原点的距离$d_i = \sqrt{x_i^2 + y_i^2} \in (0, 1)$, 且一共只有$n$个点, 要求期望复杂度为$\Theta(n)$的算法, 自然想到桶排序。由于桶排序假设数据在$(0, 1)$间均匀分布才可以均匀分割$(0, 1)$区间。这里$d$并不是均匀分布。由桶排序的推导过程启发, 我们需要将$(0, 1)$分为n个区间, 使在$d$落在这n个区间的概率相同。设这些分割点的值为$s_k, k = 1,...,n-1$。由于随机点在单位圆中每个面积中的分布期望与面积成正比, 所以随机变量$d^2 = x^2 + y^2$是一个均匀分布的随机变量, 所以我们想让
+\[
+P(d < s_k) = \frac{k}{n} = P(d^2 < s_k^2) = s_k^2
+\]
+可知$s_k = \sqrt{\frac{k}{n}}$。所以只需要以$\sqrt{\frac{1}{n}}, \sqrt{\frac{2}{n}}, \dots, \sqrt{\frac{n-1}{n}}$作为分割点, 然后使用桶排序。算法简述如下:
+\begin{enumerate}
+\item 将每个元素$i$归入一个区间$k_i = \lfloor nd_i^2 \rfloor$, $i = 0, \dots, n-1$。
+\item 对于每个区间(一共$n$个区间)分别进行插入排序。
+\end{enumerate}
+  该算法的期望复杂度为$\Theta(n)$, 证明与桶排序证明一摸一样。因为用于排序的随机变量在每个区间内分布概率都为$1/n$且相互独立, 证明中只用到了这两点性质。
+\end{document}
