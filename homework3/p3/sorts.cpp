@@ -148,7 +148,6 @@ void counting_sort(unsigned int* arr, int n, int min_bit, int bits) {
 
 // only sort non-negative integers
 void radix_sort(unsigned int* arr, int n) {
-  using namespace std;
   int bits = static_cast<int>(log2(n));
   // find max one
   unsigned int max = arr[0];
@@ -158,6 +157,15 @@ void radix_sort(unsigned int* arr, int n) {
     }
   }
   int total_bits = static_cast<int>(log2(max)) + 1;
+  int num_loops = (total_bits - 1) / bits + 1;
+  for (int i = 0; i < num_loops; i++) {
+    counting_sort(arr, n, i*bits, bits);
+  }
+}
+
+void radix_sort32(unsigned int* arr, int n) {
+  int bits = static_cast<int>(log2(n));
+  int total_bits = 32;
   int num_loops = (total_bits - 1) / bits + 1;
   for (int i = 0; i < num_loops; i++) {
     counting_sort(arr, n, i*bits, bits);

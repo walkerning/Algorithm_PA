@@ -17,4 +17,6 @@ void shell_sort(T* arr, int n);
 
 void radix_sort(unsigned int* arr, int n);
 
+void radix_sort32(unsigned int* arr, int n);
+
 #endif

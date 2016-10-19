@@ -79,6 +79,14 @@ int main(int argc, const char** argv) {
   print_arr(input, num);
   std::cout << std::endl;
 
+  memcpy(input, numbers, sizeof(unsigned int) * num);
+  start = std::clock();
+  radix_sort32(input, num);
+  std::cout << "radix sort32: " << std::endl;
+  std::cout << "Time: " << (std::clock() - start) / (double)CLOCKS_PER_SEC * 1000 << " ms" << std::endl;
+  print_arr(input, num);
+  std::cout << std::endl;
+
   delete(numbers);
   delete(input);
   return 0;
