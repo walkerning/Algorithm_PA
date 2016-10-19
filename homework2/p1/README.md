@@ -3,7 +3,7 @@ Problem1: 最近点对
 
 开发平台
 ------------
-* 平台: Max OS X 10.11.2
+* 平台: Mac OS X 10.11.2
 * 编译器: clang++: Apple LLVM version 7.0.2 (clang-700.1.81)
 * C++11
 
