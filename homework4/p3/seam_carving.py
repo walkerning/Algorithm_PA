@@ -69,10 +69,10 @@ def seam_carving_half(image, d_func):
     result_m, result_n = m/2, n/2
     for x in range(n, result_n, -1):
         image = seam_carving(image, d_func)
-    image = image.T
+    image = image.transpose((1, 0, 2)) if len(image.shape) == 3 else image.T
     for x in range(m, result_m, -1):
         image = seam_carving(image, d_func)
-    image = image.T
+    image = image.transpose((1, 0, 2)) if len(image.shape) == 3 else image.T
     return image
 
 def mean_square(image, y, x):
@@ -96,10 +96,10 @@ def main():
     result_fname = "out_" + os.path.basename(sys.argv[1])
     print("The result image will be writen to ", result_fname)
 
-    #result_im = seam_carving_half(im, mean_square)
-    for i in range(60):
-        im = seam_carving(im, mean_square)
-    result_im = im
+    result_im = seam_carving_half(im, mean_square)
+    # for i in range(60):
+    #     im = seam_carving(im, mean_square)
+    # result_im = im
     cv2.imwrite(result_fname, result_im)
 
 if __name__ == "__main__":
