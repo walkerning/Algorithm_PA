@@ -31,13 +31,16 @@
 \usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
 
 \usepackage{sectsty} % Allows customizing section commands
-\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+%\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
 
 \usepackage{fancyhdr} % Custom headers and footers
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
+\usepackage{subcaption}
+\graphicspath{{p3/}}
 %\usepackage{algorithmic}
 \usepackage[noend]{algpseudocode}
+\usepackage{listings}
 \pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
 \fancyhead{} % No page header - if you want one, create it in the same way as the footers below
 \fancyfoot[L]{} % Empty left footer
@@ -80,7 +83,7 @@
 %	PROBLEM 1
 %----------------------------------------------------------------------------------------
 
-%\section{}
+\section{书面作业}
 
 % \section{}
 % \lipsum[2] % Dummy text
@@ -140,4 +143,91 @@
 p_0p_1p_3 + p_1p_2p_3 > p_0p_2p_3 + p_0p_1p_2 \implies p_0p_3(p_2-p_1) < p_1p_2(p_3-p_0)
 \]
 满足上式且$p_2 > p_1, p_3 > p_0$的配置肯定存在, 因为两边的形式对称, 要么$p_0p_3(p_2 - p_1) \equiv p_1p_2(p_3-p_0)$, 这个显然不成立。那么就一定能构造出使任何一边小的取值, 比如我们尝试$p_2 = 3, p_1 = 2; p_3 = 4, p_0 = 1$, 此时得到$p_0p_3(p_2-p_1) = 4 < p_1p_2(p_3-p_0)=18$, $T_1 = 8 + 24 = 32 > T_2 = 12 + 6 = 18$, 举出反例, 该算法可能生成次优解。(反例只需要一次尝试一定能够构造出来, 因为如果发现尝试的解使得$T_1$ < $T_2$, 只需要交换$p_2, p_1$和$p_3, p_0$的取值组合即可)。
+\\[4ex]
+% --------
+
+\textbf{证明可能的线裁剪个数为m的指数函数}
+
+可能的线裁剪个数$\mbox{num}$满足$2^m < \mbox{num} < 3^m$。其中$2^m$的极端情况是考虑一个在图片边缘上的像素$a_{i, 0}$, 以这个像素为结尾的线个数为$l_{i, 0} = l_{i-1, 0} + l_{i-1, 1}$。事实上这个松下界可以进一步放紧, 考虑计算以第$i$行元素为结尾的线个数$l_{i, *}$, 有$l_{i, *} = 3 \times l_{i-1,*} - l_{i-1,0} - l_{i-1,n-1} \geq 3 \times l_{i-1,*} - \frac{2}{n}l_{i-1,*} = (3-\frac{2}{n})l_{i-1,*}$, 即$l_{m-1, *}\geq (3-\frac{2}{n})^{m-1}n$。由上可知$\mbox{num}$为一个$m$的指数函数。
+
+\section {线裁剪实验报告}
+
+\subsection{开发平台}
+
+\begin{itemize}
+\item 平台: Mac OS X 10.11.2
+\item Python 2.7.10
+\item 依赖库: python-opencv(用于读图); numpy==1.8.2
+\end{itemize}
+
+\subsection{运行方法}
+
+运行:
+\begin{lstlisting}[language=bash]
+  python seam_carving.py <输入图片名>
+\end{lstlisting}
+结果图片将写入运行目录下的\textbf{out\_输入文件名}文件。
+
+\subsection{算法描述}
+本次实验中使用动态规划的方法进行图像裁剪, 一次线裁剪的问题定义为: 从每行(列)中去掉一个像素(且为了保证去掉这个像素不会影响图像的连续性, 每行(列)去掉的像素必须连续(也就是在行(列)方向相差)最多一个像素), 使得去掉后对整体图像的语义效果(内容)影响最小。对于语义效果的定义并不明确, 但是在某个定义下, 可以定义每条线的cost为"这条线上所有像素与周边像素的差别之和最小"。
+
+这个问题显然可以用动态规划解决, 以列方向的线裁剪(即从每行移除一个像素)为例， 可以简单的将原问题看为两步:
+\begin{enumerate}
+\item 求以最后一行的任意一个元素$a_{n-1,i}$为结尾的线中最小代价的线$l_{n-1, i}$.
+\item 对于这张图, 裁剪的最小cost为: $\min_{i=0}^{n-1} cost(l_{n-1, i})$.
+\end{enumerate}
+
+对于第一步, 可以用动态规划求解:
+\begin{enumerate}
+\item 定义较小规模的子问题: 规模为$i$的子问题$Q_{i,j}$为: 求解以$i$行$j$列的元素为结尾的裁剪线$l_{i,j}$。
+\item 从小规模$i$的子问题合成规模为$i+1$的问题: 对于$Q_{i+1,j}$, $cost(l_{i,j}) = \min_{\delta=-1}^{\delta=1}{cost(i, j + \delta)} + d(i, j)$, 同时$j$加上对应的$\delta$即为$l_{i+1,j}$这条线在第$i$行的列坐标。
+\end{enumerate}
+从问题规模为0的问题自底向上构建该表格, 设原图大小为$m \times n$。每行子问题的计算需要$\Theta(n)$, 总复杂度为$\Theta(mn)$。作业要求中要求将原图裁剪到$\frac{m}{2} x \frac{n}{2}$。如果用线裁剪方法, 算法复杂度为$\Theta(mn^2) + \Theta(nm^2) = \Theta(mn(m+n))$。
+
+进行一次列方向线裁剪的动态规划算法如~\ref{algorithm:3}所示, 其中$\mbox{im}$为大小为$m \times n$的输入图片, $d(im, x, y)$为该图片的第$x$行第$y$列像素的cost。
+\begin{algorithm}[ht]
+  \caption{SEAM-CARVING(im, m, n, d)}
+  \label{algorithm:3}
+  \begin{algorithmic}[1]
+    \State $cost\_mat = new matrix(m, n),\quad initialize -\infty$
+    \State $way\_mat = new matrix(m - 1, n)$
+    \For{$x = 0 .. n-1$}
+    \State $cost\_mat[0, x] = d(im, 0, x)$
+    \EndFor
+    \For{$y = 1 .. m-1$}
+    \For{$x = 0 .. n-1$}
+    \For{$\delta = -1 .. 1$}
+    \If $(y, x + \delta)在图像中$
+    \If $cost\_mat[y-1, x+\delta] > cost\_mat[y,x]$
+    \State $cost\_mat[y,x] = cost\_mat[y-1, x+\delta] + d(im, y, x)$
+    \State $way\_mat[y-1, x] = x + \delta$
+    \EndIf
+    \EndIf
+    \EndFor
+    \EndFor
+    \EndFor
+
+    \State $way=[(m-1, \mbox{arg}\min(cost\_mat[m-1, :]))]$
+    \For {$y = m-1 .. 1$}
+    \State $way.append((y-1, way[-1] + way\_mat[y-1, way[-1]]))$
+    \EndFor
+    \State $\mbox{reverse}(way)$
+    \State $\mbox{remove all the pixels in `way`}$
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection{实验效果}
+下面是一个将原大小为$250 \times 201$的图片经过多次线裁剪, 得到大小为$125 \times 100$的图片的结果~\ref{pic:1}。使用的每个像素的cost函数$d$为和两边像素的均方差, 也尝试了使用每个像素和四周像素的均方差作为$d$, 效果相差无几。
+\begin{figure}
+  \centering%
+  \subcaptionbox{}[4cm]
+                {\includegraphics[height=3cm]{1}}
+                %\hspace[3cm]%
+                \subcaptionbox{}[4cm]
+                              {\includegraphics[height=3cm]{out_1}}
+                              \caption{效果示意图1}
+                              \label{pic:1}
+\end{figure}
+
+
 \end{document}
