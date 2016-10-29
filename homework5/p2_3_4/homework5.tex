@@ -37,6 +37,7 @@
 \usepackage{fancyhdr} % Custom headers and footers
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
+\algnewcommand\Break{\textbf{break}}
 \usepackage{subcaption}
 \graphicspath{{p3/}}
 %\usepackage{algorithmic}
@@ -154,17 +155,21 @@ T(n) = T(n/2) + \Theta(n)
     \While{$W > 0 \land l \leq r$}
     \State $i = \mbox{random\_pick}(1, n)$
     \State $LE, EH = \mbox{Partition(v, w, q, i, l, r)}$ \Comment{Rearrange v,w,q and return the two seperator of the three partitions}
-    \State $W_{\mbox{HIGHER}}\sum_{i=EH+1}^{r}(w_i)$
-    \State $W_{\mbox{EQUAL}}\sum_{i=LE+1}^{EH}(w_i)$
-    \State $W_{\mbox{LOWER}}\sum_{i=l}^{LE}(w_i)$
+    \State $W_{\mbox{HIGHER}} = \sum_{i=EH+1}^{r}(w_i)$
+    \State $W_{\mbox{EQUAL}} = \sum_{i=LE+1}^{EH}(w_i)$
+    \State $W_{\mbox{LOWER}} = \sum_{i=l}^{LE}(w_i)$
     \If{$W < W_{\mbox{HIGHER}}$}
     \State $l = EH + 1$
     \ElsIf{$W < W_{\mbox{HIGHER}} + W_{\mbox{EQUAL}}$}
-    \State $A = A \cup \{i | EH + 1 \leq i \leq r\}$
+    \State $A = A \cup \{(i, w_i) | EH + 1 \leq i \leq r\}$
     \State $l = LE + 1, r = EH$
     \State $W -= W_{\mbox{HIGHER}}$
+    \If{$EH - LE == 1$} \Comment{Cut this final good}
+    \State $A = A \cup \{(i, W)\}$
+    \State\Break
+    \EndIf
     \Else
-    \State $A = A \cup \{i | LE + 1 \leq i \leq r\}$
+    \State $A = A \cup \{(i, w_i) | LE + 1 \leq i \leq r\}$
     \State $r = LE$
     \State $W -= W_{\mbox{HIGHER}} + W_{\mbox{EQUAL}}$
     \EndIf
