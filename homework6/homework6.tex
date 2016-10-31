@@ -263,7 +263,51 @@
     \includegraphics[height=32ex]{vis}
     \label{fig:vis}
   \end{figure}
+
 \item \textbf{利用21.3节提出的快速不相交集合森林来高效实现此算法。假设输入任务集合已经按惩罚值单调递减的顺序排序。分析程序的运行时间。}
+
+  按照上一小节中推导的\hyperref[corollary:2]{转化后的原判据}, 很明显我们要做的事情是对于每个分段$L_x$, 维护一个数据结构, 在一个新的$d_j$落在分段$L_x: \hat{N}_{d_j}(A) = x$中时, 能够使用\textit{SEARCH}快速找到该分段的第一个槽$t_{x}$。然后就可以用\textit{MERGE}将该分段和$t_x - 1$为结尾的分段$L_{x-1}$合并, 并且合并后, 该分段的第一个槽$t'_{x-1}$等于原来的$t_x -1$为结尾的分段$L_{x-1}$分段的第一槽: $t'_{x-1} = t_{x-1}$。在我们的这个想法中, 关键是要怎么样查找该分段的第一个槽$t_{x}$, 我们当然不可以用$O(n)$的算法往前遍历, 这样复杂度太高。我首先思考了两种方法:
+  \begin{itemize}
+  \item 可不可以在每个分段的结尾处存下这个分段$L_x$的第一个元素的位置$t_x$, 然后在每个位置存下每个分段的结尾处的地址, 每次加入新的元素$d_j$都去找$d_j$所在分段的结尾处$t_{x+1}-1$, 读到$t_{x}$, 然后更新$t_{x+1}-1$处存的$\mbox{first\_pos}$记录。如果这么做查找的时候肯定是$O(1)$, 但是关键在于合并两个段的时候, 如果要更新其中一个段的所有元素记录的结尾处地址\footnote{也可以是开始处地址, 是一样的。之所以这里把开始位置$t_x$存在结束位置$t_{x+1}-1$处的$\mbox{first\_pos}记录$, 查找时先查找结束位置$t_{x+1}-1$的做法实际上绕了一下, 这是因为, 我之前自己想的方法绕了一下, 所以就按照这个讲了。}, 那么合并操作的复杂度仍然是$O(n)$。
+  \item 如果不更新所有的元素的记录, 只更新新合并的段$L_{x-1}$的最后一个元素的标志指向$L_{x}$的最后一个元素。然后在查找时用链式查找, 查找就需要$O(n)$。
+  \end{itemize}
+  但是从上面的第二种方法, 我们可以自然的想到一个优化: 可以不用链式查找的方式来查找, 而是可以用在树数据结构中从下往上查找根的方式来查找, 树$T_x$的根就是每个段$L_x$的最后一个元素的位置$t_{x+1}-1$。如果再考虑启发式的维持树的平衡性(不必完全平衡, 只需把较矮的树的根节点直接作为较高的树的根的孩子节点即可尽量平衡, 所以合并子树时仍然只需要$O(1)$), 这样就可以有效的缩短查找的时间复杂度到$O(\log(n))$。这样整体的复杂度为$\Theta(n \log(n))$。
+
+  但是这个还可以继续优化还不够, 在阅读了21.3节的优化方法后, 发现可以在\textit{SEARCH}方法中顺带将查找经过的节点的指针直接指向整个数据结构代表的段$L_x$的最后一个元素位置, 这样在下一次查找中, 需要顺着树往上查找的跳数就大大变小。利用21.3提供的几个例程, 实现题中的算法, 得到一个具体的最优调度策略(不一定是规则形式)的伪代码如下\hyperref[algo:3]{\textit{UNIT-TIME-SCHEDULE}}所示:
+
+  \begin{algorithm}[H]
+    \caption{UNIT-TIME-SCHEDULE($a$)}
+    \label{algo:3}
+    \begin{algorithmic}
+      \State $n = len(a)$
+      \State $A = \mbox{长度为n的数组}$ \Comment{调度策略, 1-based}
+      \For{$i = 0, \dots, n$}
+      \State $\mbox{add}(\mbox{MAKE-SET}(\&A[i]))$
+      \EndFor
+
+      \For{$j = 1, \dots, n$}
+      \If{$a[j].d > n$}
+      \State $a[j].d = n$
+      \EndIf
+      \State $\mbox{tree} = \mbox{FIND-SET}(\&A[a[j].d])$
+      \State $\mbox{t\_x} = \mbox{tree}.\mbox{first\_pos}$
+      \If{$\mbox{t\_x} == 0$}
+      \State $\mbox{t\_x} = \mbox{FIND-SET}(\&A[n]).\mbox{first\_pos}$ \Comment{非独立}
+      \EndIf
+      \State $A[\mbox{t\_x}] = a[j]$ \Comment{分配时间槽}
+      \State $UNION(\mbox{t\_x} - 1, a[j].d)$ \Comment{合并两个分段}
+      \EndFor
+      \Return A
+    \end{algorithmic}
+  \end{algorithm}
+
+  经过这个优化之后, 按照书上21.4节的分析, 同时利用按秩合并和路径压缩两个启发式方法时, 这个算法的最坏情况的复杂度为$O(n \alpha(n))$, 其中$\alpha(n)$是一个增长很慢的函数:
+
+  \begin{addmargin}[2em]{2em}
+    \textit{在任何一个可以想得到的不相交集合数据结构的应用中, 都有$\alpha(n) \leq 4$; 因此, 我们可以认为在所有实际应用中, 其运行时间与$m$呈线性关系。然而严格的说, 它是超线性的。}
+  \end{addmargin}
+
+  所以在实际的调度问题中, 我们可以认为使用不相交集合森林实现的加权单位时间调度问题的求解算法的运行时间约为$\Theta(n)$。
 \end{enumerate}
 
 \section{Problem 3}
