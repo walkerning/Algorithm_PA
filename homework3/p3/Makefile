@@ -1,4 +1,4 @@
-CXX_FLAGS = -O2
+CXX_FLAGS = -O2 -static
 
 all: main
 
