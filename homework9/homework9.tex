@@ -1,0 +1,228 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+\usepackage[shortlabels]{enumitem}
+\usepackage{float}
+\usepackage{ctex}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage{sectsty} % Allows customizing section commands
+%\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+\usepackage{mathrsfs}
+\usepackage{fancyhdr} % Custom headers and footers
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\algnewcommand\Break{\textbf{break}}
+
+\usepackage{scrextend} % for addmargin
+\usepackage{subcaption}
+\graphicspath{{p3/}}
+%\usepackage{algorithmic}
+\usepackage[noend]{algpseudocode}
+\usepackage{listings}
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+\normalfont \normalsize 
+%\textsc{university, school or department name} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge Analysis and Design of Algorithm - Homework 9\\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+}
+
+\author{宁雪妃} % Your name
+%\author{Xuefei Ning} % Your name
+
+\date{\normalsize\today} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+\section{Problem 1}
+\textbf{24.1-6. 假定$G = (V, E)$为一带权重的有向图, 并且图中存在一个权重为负的环路。给出一个有效算法列出所有属于该环路上的节点。并证明算法的正确性。}
+
+如果这个权重为负的环路由顶点$s$可达, 那么对于源点做Bellman-Ford算法将返回$\mbox{false}$, 经过$|V| - 1$次全部边的松弛后, 如果在检查$(u, v) \in E$的时候发现$v.d > u.d + w(u, v)$, 那么说明这个图中一定存在负权重环, $u$不一定在这个环上, 但是从$u, v$节点沿着predessor连接往前回溯, 一定存在一个负权重环。对于此时的前驱子图, 我们有:
+
+\begin{lemma}
+  \label{lemma:1}
+  此时负权重环上的所有节点在前驱图上形成了环, 即不存在一个环内的顶点$x \in C.V$, $x.\pi \notin C.V$。
+\end{lemma}
+
+那么从$u, v$节点往回回溯, 找到前驱图上的第一个环, 一定就是我们要找的一个负权重环。\hyperref[lemma:1]{上述性质}证明如下:
+
+\begin{proof}
+  反设负权重环$C$内存在一个顶点$x_1$, 在$|V| - 1$次松弛后, $x_1.\pi \notin C$, 假设$x_1.\pi$为$z$, 不妨设在第$i$次迭代时, 对$(z, x_1)$进行松弛, 并将$x.\pi$设置为$x$。设$C.V$按照顺序为$x_0, x_1, \dots, x_{|C.V|-1}$, 即$x$在负权重环上的上一个节点为$x_0$, $(x_0, x_1) \in C.E$。
+
+  如果$s \leadsto z$的路径中没有$C$上的顶点, 那么松弛$(z, x)$时的迭代次数$i \leq |V| - |C.V| - 1$, 此时一定足够在接下来的$|C.V| $ 个迭代内把$C.E$上的路径按照$(x_1, x_2), (x_2, x_3), \dots, (x_{|C.V|-1}, x_0), (x_0, x_1)$的顺序成功全部松弛一遍, 那么在第$|C.V| + i < |V| - 1$个迭代时, 有$x_0.d + w(x_0, x_1) \leq x_1.d + \sum_{i=0}{|C.V-1|} w(x_i, x_{i+1 \% |C.V|}) = x_1.d + w(C) < x_1.d$, 所以一定会在松弛$(x_0, x_1)$时将$x_1.\pi$设置为$x_0$。
+
+  如果$s \leadsto z$的路径中有$C$上的顶点$x_j$, 由于我们假设$z$不在任意一个负权重环上, 那么一定有$w(x_j \leadsto z \rightarrow x_1) > w_C(x_j \leadsto x_1)$, 其中$w_C(x_j \leadsto x_1)$ 为顺着负权重环$C$从$x_j$到$x_1$的路径的权重和。所以$w(s \leadsto x_j \leadsto z \rightarrow x_1) > w(s \leadsto x_j \leadsto x_1)$, 所以在经过最多$|V| - 1$次迭代后, 一定足够将$s \leadsto x_j \leadsto x_1$上的所有边都松弛一遍, 所以一定可以找到这个比$s \leadsto x_j \leadsto z \rightarrow x_1$更优的解。由于upper-bound property, 在$|V| - 1$个迭代后, 一定已经将$x_1.\pi$设置为$x_0$。
+\end{proof}
+
+由于有上述性质, 一定可以从$v$节点开始, 在前驱子图上进行回溯, 找到的第一个环(第一次在回溯路径上遇到已经遇到过的节点)就是我们要找的负权重环。算法描述如下:
+
+\begin{algorithm}[H]
+  \caption{FIND-NEGATIVE-CYCLE($G$, $s$)}
+  \label{algo:1}
+  \begin{algorithmic}
+    \State $H = \mbox{new hash}$
+    \State $C = \{\}$
+    \State $\mbox{INITIALIZE-SINGLE-SOURCE}(G, s)$
+    \For{$i=1, \dots |G.V|−1$}\Comment{$O(VE)$}
+    \For{$for each edge (u,v) \in G.E$}
+    \State $\mbox{RELAX}(u, v, w)$
+    \EndFor
+    \EndFor
+    \For{$each edge (u,v) \in G.E$}
+    \If{$v.d > u.d + w(u, v)$}
+    \State $H.\mbox{add}(u)$
+    \State $H.\mbox{add}(v)$
+    \State $v = v.\pi$
+    \While{$!H.\mbox{exists}(v) $}\Comment{在前驱子图上回溯, 找到第一个环, 使用Hash表, 复杂度达到$O(E)$}
+    \State $H.\mbox{add(v)}$
+    \State $v = v.\pi$
+    \EndWhile
+    \State $x = v.\pi$
+    \State $C.\mbox{add}(v)$
+    \While{$x != v$}\Comment{构造环$C$, $O(E)$}
+    \State $C.\mbox{add}(x)$
+    \State $x = x.\pi$
+    \EndWhile
+    \EndIf
+    \EndFor
+    \State\Return $C$
+  \end{algorithmic}
+\end{algorithm}
+
+上述算法复杂度为$O(V E)$。如果该负权重环从我们选取的源点$s$可能不可达。所以可能需要对所有顶点$V$遍历直到找到一个负权重环, 最坏需要$O(V^2 E)$的时间复杂度。
+
+\section{Problem 2}
+\textbf{24.1. (Yen对Bellman-Ford算法的改进) 假定对Bellman-Ford算法中对边的每一遍松弛操作的次序做出以下规定: 在第一遍松弛前, 我们给输入图$G = (V, E)$的所有节点赋予一个随机的线性次序$v_1, v_2, \dots, v_{|V|}$。然后, 将边集合$E$划分为$E_f \cup E_b$, 这里$E_f = \{ (v_i, v_j) \in E: i < j\}$, $E_b = \{ (v_i, v_j) \in E: i > j\}$。(假设图$G$不包含自循环, 因此一条边要么属于$E_f$, 要么属于$E_b$)定义$G_f = (V, E_f)$, $G_b = (V, E_b)$。}
+\begin{enumerate}[a]
+\item \textbf{证明: $G_f$是无环的, 且其拓扑排序为$< v_1, v_2, \dots, v_{|V|}>$; $G_b$是无环的, 且其拓扑排序为$<v_{|V|}, v_{|V| - 1}, \dots, v_1>$。}
+
+  \begin{proof}
+    反设$G_f$里有环, 假设$(v_{i_1}, v_{i_2}, \dots, v_{i_c})$为这个环, 根据$E_f$的定义, 一定有$v_{i_c} > \dots > v{i_1} > v_{i_c}$, 矛盾。$<v_1, v_2, \dots, v_{|V|}$为$G_f$的一个合法的拓扑排序, 很明显$\forall e \in E_f$, 都不会违反该拓扑排序。
+
+    反设$G_b$里有环, 假设$(v_{i_1}, v_{i_2}, \dots, v_{i_c})$为这个环, 根据$E_b$的定义, 一定有$v_{i_c} < \dots < v{i_1} < v_{i_c}$, 矛盾。$<v_{|V|}, v_{|V| - 1}, \dots, v_1$为$G_b$的一个合法的拓扑排序, 很明显$\forall e \in E_b$, 都不会违反该拓扑排序。
+  \end{proof}
+
+\item \textbf{假定我们以下面方式实现Bellman-Ford算法的每一遍松弛操作: 以$v_1, v_2, \dots, v_{|V|}$的次序访问每个节点, 并对从每个节点出发的$E_f$边进行松弛。然后再以次序$v_{|V|}, \dots, v_1$次序访问每个节点, 并对每个节点发出的$E_b$进行松弛。}
+
+  \textbf{证明: 在上述操作方式下, 如果图$G$不包含从源节点$s$可以到达的权重为负值的环路, 则在$\lceil \frac{|V|}{2} \rceil$遍松弛操作后, 对于所有节点$v \in V$, 都有$v.d = \delta(s, v)$。}
+
+  \begin{proof}
+    设路径$p = <u_0, u_1, u_2, \dots, u_l>$($u_0 = s, u_l = v$)为从$s$到$v$的最短路径, 其中$l$为路径长度, $l \leq |V| - 1$。假设$p$中有$x_f$条路径属于$E_f$, 即构成集合$p_f = \{(u_i, u_{i+1}) | u_i < u_{i+1}\}$, $x_b$条路径属于$E_b$, 即构成集合$p_f = \{(u_i, u_{i+1}) | u_i > u_{i+1}\}$。其中$u_i$为顶点在$<v_i>$序列中的序号, 代表每个顶点$v_i$。每次在$E_f$上按照DAG的方式做松弛, 如果从$u_0$开始$p$中紧接的$y_{f1}$条边都属于$E_f$, 那么第一次在$E_f$上松弛时, 将成功松弛$y_{f1}$条边; 第一次在$E_b$上松弛时, 从$u_{y_{f1}}$开始, 同理将成功松弛$y_{b1}$条边。由于每次在$E_f$上松弛都能松弛到$p$上下一条边属于$p_b$的位置, 然后再进行$E_b$上的松弛, 所以每一个$y_{bi} > 0, i=1,2,\dots$。相应的, $E_f$上的松弛有$y_{fi} > 0, i=2,3,\dots$, 最坏情况$y_{f1}$可能为0. 设循环次数为$n$, 有:
+
+    \[
+    \begin{split}
+      \displaystyle\sum_{i=1}^n y_{fi} + y_{bi} = l \leq |V| - 1 \\
+      \begin{cases}
+        y_{bi} > 0, \quad i=1,2,\dots,n-1\\
+        y_{bn} \geq 0\\
+        y_{f1} \geq 0\\
+        y_{fi} > 0, \quad i=2,3,\dots,n
+      \end{cases}
+    \end{split}
+    \]
+
+    根据上面对$y_{bi}$和$y_{fi}$的分析, 我们有, $\sum_{i=1}^n y_{fi} + y_{bi} \geq 2n - 2$, 代入方程有$2n - 2 \leq l \leq |V| - 1$, 即$n \leq (|V|+1)/2$, 所以最多只需要$\lceil \frac{|V|}{2} \rceil$即可。
+
+  \end{proof}
+
+\item \textbf{上述算法是否改善了Bellman-Ford算法的渐进运行时间。}
+  在$E_f$和$E_g$上进行一遍松弛需要$O(E)$, 一共需要$\frac{|V|}{2} = O(V)$次迭代, 一共仍然需要$O(VE)$的时间复杂度。对Bellman-Ford算法的渐进运行时间并没有改善。
+
+\end{enumerate}
+
+\section{Problem 3}
+\textbf{25.1. (动态图的传递闭包) 假定我们希望在将边插入到集合$E$中时维持有向图$G = (V, E)$的传递闭包, 即在插入每条边后, 我们希望对到目前为止已插入边的传递闭包进行更新。假定图$G$开始时不包含任何边, 且传递闭包用布尔矩阵表示。}
+
+\begin{enumerate}[a]
+\item \textbf{说明再加入一条新边到图$G$时, 如何在$O(V^2)$时间内更新$G=(V,E)$的传递闭包$G^{*} = (V, E^{*})$。}
+
+  假设新加入边$e = (u, v)$到图$G$中, 只需要将原图$G$的传递闭包$G^{*}$中能够到达$u$的节点$x$和原$G^{*}$中$v$能到达的节点$y$设置为能够到达即可。即将$\{(x, y) | (x, u) \in E^{*} \land (v, y) \in E^{*} \} \cup \{(x, v) | (x, u) \in E^{*}\} \cup \{(u, y) | (v, y) \in E^{*}\}$加入$G^{*}$的边集$E^{*}$即可。这个集合最大为$O(V^2)$, 最多更新$O(V^2)$的数据, 所以需要$O(V^2)$的时间复杂度。
+
+\item \textbf{给出一个图$G$和一条边$e$, 使得在将边$e$加入$G$后, 更新传递闭包的时间复杂性为$\Omega(V^2)$, 不管使用哪种算法。}
+
+  设$e = (u, v)$, 只要构造图$G$使得必须需要更新$\Theta(V^2)$个项即可, 因为不管哪个算法都一定需要填入$\Theta(V^2)$个数。可以构造图$G$为$G_1$, $G_2$两个子图的结合, 其中$G_1$, $G_2$之间没有任何边连接, $G_1$顶点之间全连接, $G_2$顶点之间全连接, $u \in G_1.V$, $u \in G_2. V$即可。
+
+\item \textbf{描述一个有效算法, 使得在将边加入图$G$时更新传递闭包。对于任意$n$次插入的序列, 算法运行总时间应该为$\sum_{i=1}^n t_i = O(V^3)$, 其中$t_i$为插入第$i$条边时更新传递闭包所用时间。证明算法确实达到了这个时间效率。}
+
+  仍然用$a$中描述的算法, 虽然每次插入边$e$时, 虽然是$O(V^2)$的, 但是如果研究$(x, u) \in E^{*}$时, 发现$(x, v) \in E^{*}$, 那么$(x, y), \forall y \in E^{*} \land (y, v) \in E^{*}$其实不需要遍历, 因为在上一次插入得到的$E^{*}$中肯定已经包括了所有的这些$(x, y)$了; 研究$(v, y) \in E^{*}$时同理。
+
+  对于$G^{*}$对应的邻接矩阵里的某一列$i$的每个位置$j$, 如果填上了1, 下次计算这一列的时候就不需要计算$j$一行对应的节点了。所以不管进行怎么样的$n$次插入, 对于$G^{*}$的邻接矩阵中的任意一列$u$, 在这$n$次插入中, 对这一列插入的边集合$E_u = \{(u, x)\}$造成的计算复杂度一定不超过$O(V^2)$。 所以对于一共$V$个节点($V$列), 总的复杂度不超过$O(V^3)$。
+
+  每一次插入边$e$对$G^{*}$的更新算法描述如下:
+
+\begin{algorithm}[H]
+  \caption{UPDATE-TRANSITIVE-CLOSURE($G^{*}$, $e$)}
+  \label{algo:2}
+  \begin{algorithmic}
+    \For{$i=1, \dots, |V|$}\Comment{假设$G$用邻接矩阵形式存储}
+    \If{$G^{*}[i, e.u] == 1 \land G^{*}[i, e.v] == 0 $}\Comment{只有当$(i, v) \notin E^{*}$才需要更新$(i, j)$们}
+    \For{$j=1, \dots, |V|$}
+    \If{$G^{*}[v, j] == 1$}
+    \State $G^{*}[i, j] = 1$
+    \EndIf
+    \EndFor
+    \EndIf
+    \EndFor
+  \end{algorithmic}
+\end{algorithm}
+
+\end{enumerate}
+\end{document}
+
