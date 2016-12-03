@@ -1,0 +1,158 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+\usepackage[shortlabels]{enumitem}
+\usepackage{float}
+\usepackage{ctex}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage{sectsty} % Allows customizing section commands
+%\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+\usepackage{mathrsfs}
+\usepackage{fancyhdr} % Custom headers and footers
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\algnewcommand\Break{\textbf{break}}
+
+\usepackage{scrextend} % for addmargin
+\usepackage{subcaption}
+\graphicspath{{p3/}}
+%\usepackage{algorithmic}
+\usepackage[noend]{algpseudocode}
+\usepackage{listings}
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+\normalfont \normalsize 
+%\textsc{university, school or department name} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge Analysis and Design of Algorithm - Homework 10\\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+}
+
+\author{宁雪妃} % Your name
+%\author{Xuefei Ning} % Your name
+
+\date{\normalsize\today} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+\section{Problem 1}
+\textbf{26.1-7. 假定除边的容量外, 流网络还有结点容量。即对于每个结点$v$, 有一个极限值$l(v)$, 这是可以流经结点$v$的最大流量。请说明如何将一个带有结点容量的流网络$G=(V,E)$转换为一个等价的但是没有结点容量的流网络$G' = (V', E')$, 使得$G'$中的最大流与$G$中最大流的取值一样。图$G'$里有多少个结点和多少条边?}
+
+只需要将每个节点$v \in V$, 换成两个节点$v_1 \in V', v_2 \in V'$, 并使:
+\begin{itemize}
+\item 所有在$E$中连入$v$的边都连入$v1$, 边权重不变;
+\item 所有在$E$中由$v$发出的边都从$v2$发出, 边权重不变;
+\item 从$v_1$到$v_2$有一条边权重为$w(v1, v2) = l(v)$。
+\end{itemize}
+
+即$V' = \cup_{v \in V} \{v_1, v_2\}$, $E' = \{(u_2, v_1) | (u, v) \in E\} \cup \{(v_1, v_2) | v \in V\}$。每个结点拆成了两个, 所以图$G'$中有$2|V|$个结点; 新增了$V$条边, 所以图$G'$中有$|E| + |V|$条边。
+
+\section{Problem 2}
+\textbf{26.2-10. 说明在流网络$G = (V, E)$中, 如何使用一个最多包含$|E|$条增广路径的序列来找到一个最大流。(提示: 找到最大流后再确定路径)}
+
+先用算法找到最大流和其对应的最大流图$G' = (V, E')$, $E' \subseteq E$, $E'$中每条边的权重为最大流图中流经该边的流大小。对于$E'$中的每条边, 按照权重大小从小到大进行处理, 假设$e = (u, v)$是此时$E'$中权重最小的边(流经$e$中的流最小):
+
+\begin{enumerate}
+\item 在$G'^T$(最大流图的转置图)中从$u$开始往源点$s$进行深度优先搜索, 由于我们选取$e$为$w(e)$最小的边, 路上经过的所有边$(s, x_1), (x_1, x_2), \dots, (x_{m-1}, u)$的权重肯定满足$w(x) > w(e)$。再从$v$开始在$G'$上往汇点$t$搜索, 同样的有路上经过的所有边$(v, y_1), \dots, (y_n, t)$的权重也满足$w(y) > w(e)$。
+\item 得到增广路径$l_i = \{(s, x_1), (x_1, x_2), \dots, (x_{m-1}, u), (u, v), (v, y_1), (y_n, t)\}$, 其流大小为$w(e)$。对于增广路径上所有边$x \in l_i$, 修改其权重$w(x) = w(x) - w(e) > 0$。
+\item 将$e = (u, v)$边从图$G'$中删除, 并继续这个循环。
+\end{enumerate}
+
+通过这种方式, 可以在$G'$中一个循环删除一条边, 并构造出对应的一条增广路径。增广路径序列里的增广路径个数最多为$|E'| < |E|$个。
+
+\section{Problem 3}
+\textbf{26.3-4. 完全匹配指图中所有节点都能得到匹配的匹配。设$G = (V, E)$是结点划分为$V = L \cup R$的无向二分图, 其中$|L| = |R|$。对于任意$X \subseteq V$, 定义$X$的邻居为:}
+\[
+N(X) = \{ y \in V: \mbox{对某个}x \in X, (x,y) \in E\}
+\]
+\textbf{即由与$X$的某元素相邻的结点构成的集合。请证明Hall定理: 图$G$中存在一个完全匹配当且仅当对于每个子集$A \subseteq L$, 有$|A| \leq |N(A)|$。}
+
+``=>'': 证明其逆反命题: 当存在某个子集$A \subseteq L$, $|A| > |N(A)|$时, 图$G$中不存在完全匹配。
+
+\begin{proof}
+  如果存在某个子集$A \subseteq L$, 使得$|A| > |N(A)|$, 考虑子图$V_{sub} = (A \cup N(A))$, 并保留原图在子图中的连接, 对于这个二分子图, 其对应的流网络图的最大流$|f| \leq |N(A)| < |A|$。如果需要完全匹配, 由于$A$中结点到$R - N(A)$中的所有结点都没有边, 所以这个子图对应的流网络图的最大流必须$|f|=|A|$才行, 矛盾。所以$G$中不存在完全匹配。
+\end{proof}
+
+``<='': 证明: 如果图$G$中不存在完全匹配, 则$\exists A \subseteq L, \quad\mbox{s.t.} |A| > |N(A)|$。
+
+\begin{proof}
+  给出构造$A: |A| > |N(A)|$的方法如下:
+
+  如果图$G$中不存在完全匹配, 考虑一个最大匹配$M$, 不是完全匹配, 所以$\exists x \in L, \quad\mbox{s.t.} \forall (u, v) \in M, u \neq x$, 即存在一个节点$x$, $x$发出的边都不在匹配$M$中, 构造$A_0 = \{v | (v, y) \in M \land y \in N(\{x\})\} \cup \{x\}$, 即所有在$R$中和$x$相连的结点在$L$中的匹配对象的集合, 再并上$\{x\}$, 设$|A_0| = n_0 + 1$。此时如果$\exists y \in N(A_0), \mbox{s.t.} M(y) \notin A_0$, 有两种可能:
+  \begin{itemize}
+  \item $y$在$M$中没有匹配, 此时假设$z$为此时在$A_0$中的$y$的邻居节点, 一定可以调整匹配$M$, 使$z$连接向$y$, 将$x$与原$M$中的$M(z)$连接, 使得匹配数增加1。这样与$M$为最大匹配矛盾。
+  \item $y$存在匹配, 匹配$M(y)$在$L - A_0$集合中。此时继续构造$A_1 = A_0 \cup \{M(y) | y \in N(A_0) \land M(y) \notin A_0\}$。如果这样的$y$有$n_1$个, 那么现在$|A_1| = n_0 + n_1 + 1$, 如果$|N(A_1)| = n_0 + n_1 + |\{y | y \in N(A_1) \land M(y) \notin A_1\}|$仍然大于$|A_1$, 继续这个构造。直到构造到$A_k$, 满足$N(A_k)$全部在$M(A_k)$中, 即$\nexists y \in(A_k) \land M(y) \notin A_k$。此时$|A_k| = \sum_{i=0}^{k} n_i + 1$, $|N(A_k)| = \sum_{i=0}^k n_i < |A_k|$。
+  \end{itemize}
+
+  构造的过程类似表中所示:
+  \begin{center}
+    \begin{tabular}{ c | c | c | c }
+      $|A_i|$ & $A_i$ & $R'_i$ & $|R'_i|$\\
+      $n_0 + 1$ & $M(N(x)) \cup \{x\}$ & $N(x)$ & $n_0$\\
+      $n_0 + n_1 + 1$ & $M(N(M(N(x)))) + M(N(x)) \cup \{x\}$ & $N(x) + N(M(N(x)))$ & $n_0 + n_1$\\
+      \vdots & \vdots & \vdots & \vdots\\
+      $\sum_{i=0}^k n_i + 1$ & \dots & \dots & $\sum_{i=0}^k n_i$
+    \end{tabular}
+  \end{center}
+
+  这个构造的循环的终止条件使得终止的时候$R' = N(A)$, 且一定能够终止。因为每次$n_i > 0$才会继续构造($n_i = 0$就已经成功构造了), 而$\sum_{i=0}^k n_i < |L|$。而且很容易从表格看出用这个构造方法, 构造出来的$A_i$都满足$|A_i| < |R'|$, 所以终止时也有$|A_k| < |R'_k| = |N(A_k)|$。
+
+\end{proof}
+\end{document}
+
