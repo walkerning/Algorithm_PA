@@ -1,0 +1,191 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+\usepackage[shortlabels]{enumitem}
+\usepackage{float}
+\usepackage{ctex}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage{sectsty} % Allows customizing section commands
+%\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+\usepackage{mathrsfs}
+\usepackage{fancyhdr} % Custom headers and footers
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\algnewcommand\Break{\textbf{break}}
+
+\usepackage{scrextend} % for addmargin
+\usepackage{subcaption}
+\graphicspath{{p3/}}
+%\usepackage{algorithmic}
+\usepackage[noend]{algpseudocode}
+\usepackage{listings}
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+\normalfont \normalsize 
+%\textsc{university, school or department name} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge Analysis and Design of Algorithm - Homework 11\\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+}
+
+\author{宁雪妃} % Your name
+%\author{Xuefei Ning} % Your name
+\usepackage{advdate}
+
+\date{\normalsize{\AdvanceDate[-1]\today}} % Today's date or a custom date
+
+\begin{document}
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+\section{Problem 1}
+\textbf{32.4-8. 给出一个有效算法, 计算出相应于某给定模式P的字符串匹配自动机的转移函数$\delta$。所给出的算法的运行时间应该是$O(m |\sum|)$。}
+
+在课件中的$\mbox{COMPUTE-TRANSITION-FUNCTION}$中判断是否为前缀的一步可能需要多次循环。所以可以想到先用KMP算法中的$\mbox{COMPUTE-PREFIX-FUNCTION}$计算出模式字符串里每个位置的最大匹配前缀。该过程的时间复杂度为$O(m)$。总的过程如\hyperref[algo:1-1]{下述算法}所示:
+
+  \begin{algorithm}[H]
+  \caption{COMPUTE-TRANSITION-FUNCTION($P$, $\sum$)}
+  \label{algo:1-1}
+  \begin{algorithmic}
+    \State $\pi = \mbox{COMPUTE-PREFIX-FUNCTION(P)}$
+    \For{$q = 0 to m$}
+    \For{each character $a \in \sum$}
+    \If{$q \leq m-1 \land a == P[q+1]$}
+    \State $\delta(q, a) = q + 1$
+    \Else
+    \State $\delta(q, a) = \delta(\pi[q], a)$\Comment{从$\pi[q]$开始再匹配$a$}
+    \EndIf
+    \EndFor
+    \EndFor
+  \end{algorithmic}
+\end{algorithm}
+
+  该算法中循环部分, 每个小循环的复杂度均为$\Theta(1)$, 总共有$m|\sum|$重循环, 所以复杂度为$\Theta(m|\sum|)$。算法的总复杂度为$\Theta(m|\sum|)$。
+
+\section{Problem 2}
+\textbf{32-1. (基于重复因子的字符串匹配) 设$y^i$表示字符串$y$与其自身首尾相接$i$次所得结果。例如${(ab)}^3=ababab$。如果对于某个字符串$y \in \sum^{*}$和某个$r > 0$有$x = y^r$, 则称字符串$x \in \sum^{*}$具有重复因子$r$。设$\rho(x)$表示使得$x$具有重复因子$r$的最大值。}
+
+\begin{enumerate}[a]
+\item \textbf{写出一有效算法以计算出$\rho(P_i)(i = 1,2,\dots,m)$, 算法的输入为模式$P[1..m]$。算法的运行时间为多少?}
+
+  容易观察到: 如果$i$位置的前缀为$\pi[i]$, 那么$i$位置能够有的最小重复子字符串$r$最小长度为$i - \pi[i]$, 并且当$i \mbox{ mod } (i - \pi[i]) == 0$时, $P[\pi[i]..i]$确实就是重复的pattern; 不满足时$\rho[i] = 1$, 因为如果一个子串是重复的pattern, 一定可以找到一个满足$\mbox{mod}$为0的$\pi[i]$。所以先使用KMP预处理$\mbox{COMPUTE-PREFIX-FUNCTION}$处理, 算出前缀$\pi$。然后就很容易处理了, 如\hyperref[algo:2-2]{下面伪代码}所示:
+
+  \begin{algorithm}[H]
+  \caption{CAL-REPEAT-COEFF($P$)}
+  \label{algo:2-2}
+  \begin{algorithmic}
+    \State $\pi = \mbox{COMPUTE-PREFIX-FUNCTION(P)}$\Comment{$O(m)$}
+    \For{$i = 1, m$}\Comment{$O(m)$}
+    \If{$i \mbox{ mod } (i - \pi[i]) == 0$}
+    \State $\rho[i] = \frac{i}{i - \pi[i]}$
+    \Else
+    \State $\rho[i] = 1$
+    \EndIf
+    \EndFor
+  \end{algorithmic}
+  \end{algorithm}
+
+  $\mbox{COMPUTE-PREFIX-FUNCTION}$复杂度为$O(m)$, for循环的复杂度也为$O(m)$, 总复杂度为$O(m)$。
+
+\item \textbf{对任何模式$P[1..m]$, 设$\rho^{*}(P)$定义为$\max_{1<i<m} \rho(P_i)$。证明: 如果从长度为$m$的所有二进制字符串所组成的集合中随机的选择模式$P$, 则$\rho^{*}(P)$的期望值是$O(1)$。}
+
+  当$m = 2$, $E(\rho^{*}(P)) = 1 \times \frac{1}{2} + 2 \times \frac{1}{2} = \frac{3}{2}$。
+
+  考虑在一个长度为$m, m \geq 2$的字符串上加入一个新的字母$a = P[m+1]$, $\rho^{*}(P[1..m+1])$最多能升高1。能使其升高的序列的情况是: 原来在位置$m - p < i < m$处有一个长度为$p$的重复pattern, $p = \frac{i}{\rho^{*}(P[1..m])}$, 且新加入的这个字母$a$刚好又在$P[i+1..m+1]$之间形成了该长度为$p$的pattern, 此时$m + 1 \mbox{ mod } p == 0$。假设已有条件: 原来的$\rho^{*}(P) = r$, 最小重复pattern字符串长度为$p$, 已经固定, 那么所有字母随机取时, 使得从第$P[1..m]$到$P[1..m+1]$过程中$\rho^{*}[P]$升高的组合个数为$1$, 总的可能的字符串个数为$2^{p}$。期望计算如下, 其中考虑$r > 1$的情况, 因为若$\rho^{*}(P) = 1$, 肯定为$O(1)$:
+  \[
+  E(\rho^{*}(P[1..m+1])) = E(\rho^{*}(P[1..m])) + \sum_{r=2, \dots, m+1} P(\rho^{*}(P[1..m]) = r) \frac{2^{(m+1)/r}}{2^{m+1}}
+  \]
+  放缩$P(\rho^{*}(P[1..m]) $这一项至1, 并且把$2^{(m+1)/r}, r \geq 2 $放缩到$2^{(m+1)/2}$, 有
+  \[
+  E(\rho^{*}(P[1..m+1])) \leq E(\rho^{*}(P[1..m])) + m / 2^{(m+1)/2}
+  \]
+  级数$\sum_{m=2}^{\infty} \frac{m}{2^{(m+1)/2}} \rightarrow \frac{1}{2} + \frac{1}{sqrt{2} - 1} = O(1)$。得证。
+
+\item \textbf{论证下列字符串匹配算法可以在$O(\rho^{*}(P)n + m)$的时间内正确的找出模式$P$在文本$T[1..n]$中的所有出现位置。}
+  \begin{algorithm}[H]
+  \caption{REPETITION-MATCHER($P$, $T$)}
+  \label{algo:2-1}
+  \begin{algorithmic}
+    \State $m = P.\mbox{length}$
+    \State $n = T.\mbox{length}$
+    \State $k = 1 + \rho^{*}(P)$
+    \State $q = 0$
+    \State $s = 0$
+    \While{$s \leq n-m$}
+    \If{$T[s + q + 1] == P[q+1]$}
+    \State $q = q + 1$
+    \If{$q == m$}
+    \State {print ``Pattern occurs with shift'' $s$}
+    \EndIf
+    \EndIf
+    \If{$q == m$ or $T[s+q+1] \neq P[q+1]$}
+    \State $s = s + \max(1, \lceil q/k \rceil)$
+    \State $q = 0$
+    \EndIf
+    \EndWhile
+  \end{algorithmic}
+\end{algorithm}
+  算法的正确性: 这个算法每次匹配失败移动的距离都小于KMP算法移动的距离$\lceil q/k \rceil < q / \rho^{*}(P) < q / \rho(P[1..q]) = q - \pi[q]$, 所以这个算法比KMP算法更加保守, 不会出错。
+
+  %中间肯定不会匹配, 如果移动$i < \lceil \frac{q}{k} \rceil$匹配就说明: $P[1..q-i+1]$和$P[i..q]$是一样的, 此时$\rho^{*}(P)$
+  算法复杂度： 计算$\rho^{*}(P)$需要$O(m)$的时间。
+
+  可以看出$s$一直在增加, 而且$s$到最后最大为$n$, 每次至少加1, 实际上可以加$\lceil \frac{a}{k} \rceil$。 $q$或$s$在每次循环中至少有一个会要增加, $s$增加的最慢的时候是每次满足$T[s+q+1] == P[q+1]$, 那么每$m$次循环$s$才增加一次, 直到$q$从$0$增加到$m$。所以循环部分最坏需要$O(\frac{n}{lceil m / (1 + \rho^{*}(P)) \rceil} \times m)$ = $O(n\rho^{*}(P))$。
+
+  即算法总复杂度为$O(\rho^{*}(P)n + m)$。
+\end{enumerate}
+\end{document}
+
